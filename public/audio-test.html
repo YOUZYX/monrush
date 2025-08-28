@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MonadRush Audio Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a2e;
+            color: #fff;
+        }
+        
+        .button {
+            background: #16213e;
+            border: 2px solid #7A5FFF;
+            color: #00ffff;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .button:hover {
+            background: #7A5FFF33;
+        }
+        
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #333;
+            border-radius: 8px;
+        }
+        
+        .status {
+            background: #333;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+        
+        .warning {
+            background: #ff6b35;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎵 MonadRush Audio Test Page</h1>
+    
+    <div class="warning">
+        ⚠️ <strong>Note:</strong> This is a standalone test page. Audio files must be placed in <code>/public/audio/</code> folder first.
+    </div>
+    
+    <div class="section">
+        <h2>Sound Effects Test</h2>
+        <button class="button" onclick="testSound('click.mp3')">🖱️ Logo Tap (click.mp3)</button>
+        <button class="button" onclick="testSound('bonus.mp3')">🎁 Gift Open (bonus.mp3)</button>
+        <button class="button" onclick="testSound('danger.mp3')">⚠️ Glitch Hit (danger.mp3)</button>
+        <button class="button" onclick="testSound('bomb_explode.mp3')">💥 Bomb Explode (bomb_explode.mp3)</button>
+        <button class="button" onclick="testSound('combo.mp3')">🔥 Combo (combo.mp3)</button>
+        <button class="button" onclick="testSound('time_warning.mp3')">⏰ Time Warning (time_warning.mp3)</button>
+        <button class="button" onclick="testSound('power_up.mp3')">✨ Power Up (power_up.mp3)</button>
+        <button class="button" onclick="testSound('game_start.mp3')">🚀 Game Start (game_start.mp3)</button>
+        <button class="button" onclick="testSound('game_over.mp3')">🏁 Game Over (game_over.mp3)</button>
+    </div>
+    
+    <div class="section">
+        <h2>Background Music Test</h2>
+        <button class="button" onclick="testMusic('menu_music.mp3')">🎵 Menu Music</button>
+        <button class="button" onclick="testMusic('game_music.mp3')">🎮 Game Music</button>
+        <button class="button" onclick="testMusic('intense_music.mp3')">🔥 Intense Music</button>
+        <button class="button" onclick="stopAllMusic()">⏹️ Stop All Music</button>
+    </div>
+    
+    <div class="section">
+        <h2>Volume Control</h2>
+        <label>Master Volume: </label>
+        <input type="range" min="0" max="1" step="0.1" value="0.7" onchange="setVolume(this.value)">
+        <span id="volumeDisplay">70%</span><br><br>
+        
+        <button class="button" onclick="toggleMute()">🔇 Toggle Mute</button>
+        <span id="muteStatus">Audio Enabled</span>
+    </div>
+    
+    <div class="section">
+        <h2>Audio Status</h2>
+        <div class="status" id="audioStatus">
+            Initializing audio system...
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>Required Audio Files</h2>
+        <p>Place these files in <code>/public/audio/</code>:</p>
+        <ul>
+            <li><strong>Sound Effects:</strong> click.mp3, bonus.mp3, danger.mp3, bomb_explode.mp3, combo.mp3, time_warning.mp3, power_up.mp3, game_start.mp3, game_over.mp3</li>
+            <li><strong>Background Music:</strong> menu_music.mp3, game_music.mp3, intense_music.mp3</li>
+        </ul>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/howler@2.2.3/dist/howler.min.js"></script>
+    <script>
+        // Simple audio test system
+        const sounds = new Map();
+        const music = new Map();
+        let currentMusic = null;
+        let isMuted = false;
+        
+        // Initialize test audio system
+        function initAudio() {
+            updateStatus('Audio system initialized. Ready to test sounds.');
+        }
+        
+        function testSound(filename) {
+            const soundId = filename.replace('.mp3', '');
+            
+            if (!sounds.has(soundId)) {
+                sounds.set(soundId, new Howl({
+                    src: [`/audio/${filename}`],
+                    volume: 0.7,
+                    onload: () => updateStatus(`✅ Loaded: ${filename}`),
+                    onloaderror: () => updateStatus(`❌ Failed to load: ${filename} - Check if file exists`),
+                }));
+            }
+            
+            const sound = sounds.get(soundId);
+            sound.play();
+            updateStatus(`🔊 Playing: ${filename}`);
+        }
+        
+        function testMusic(filename) {
+            const musicId = filename.replace('.mp3', '');
+            
+            // Stop current music
+            if (currentMusic) {
+                music.get(currentMusic).stop();
+            }
+            
+            if (!music.has(musicId)) {
+                music.set(musicId, new Howl({
+                    src: [`/audio/${filename}`],
+                    volume: 0.3,
+                    loop: true,
+                    onload: () => updateStatus(`✅ Music loaded: ${filename}`),
+                    onloaderror: () => updateStatus(`❌ Failed to load music: ${filename} - Check if file exists`),
+                }));
+            }
+            
+            const track = music.get(musicId);
+            track.play();
+            currentMusic = musicId;
+            updateStatus(`🎵 Playing music: ${filename}`);
+        }
+        
+        function stopAllMusic() {
+            if (currentMusic) {
+                music.get(currentMusic).stop();
+                currentMusic = null;
+                updateStatus('⏹️ Music stopped');
+            }
+        }
+        
+        function setVolume(volume) {
+            Howler.volume(parseFloat(volume));
+            document.getElementById('volumeDisplay').textContent = Math.round(volume * 100) + '%';
+            updateStatus(`🔊 Volume set to ${Math.round(volume * 100)}%`);
+        }
+        
+        function toggleMute() {
+            isMuted = !isMuted;
+            Howler.mute(isMuted);
+            document.getElementById('muteStatus').textContent = isMuted ? 'Audio Muted' : 'Audio Enabled';
+            updateStatus(isMuted ? '🔇 Audio muted' : '🔊 Audio unmuted');
+        }
+        
+        function updateStatus(message) {
+            const status = document.getElementById('audioStatus');
+            status.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}<br>` + status.innerHTML;
+        }
+        
+        // Initialize on page load
+        initAudio();
+        
+        // Test if files exist
+        setTimeout(() => {
+            updateStatus('💡 Click buttons above to test audio files. Check browser console for detailed errors.');
+        }, 1000);
+    </script>
+</body>
+</html>

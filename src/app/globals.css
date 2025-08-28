@@ -1,0 +1,92 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --background: #0b0f14;
+  --foreground: #e8f1ff;
+  
+  /* MonadRush color palette */
+  --charcoal: #0b0f14;
+  --ink: #0d1218;
+  --electric-cyan: #28e1ff;
+  --purple-accent: #7a5fff;
+  --soft-white: #e8f1ff;
+  --success-lime: #8aff7a;
+  --danger: #ff5b5b;
+  --monad-purple: #836EF9;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  
+  /* Custom colors */
+  --color-charcoal: var(--charcoal);
+  --color-ink: var(--ink);
+  --color-electric-cyan: var(--electric-cyan);
+  --color-purple-accent: var(--purple-accent);
+  --color-soft-white: var(--soft-white);
+  --color-success-lime: var(--success-lime);
+  --color-danger: var(--danger);
+  --color-monad-purple: var(--monad-purple);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Rajdhani', 'Orbitron', system-ui, sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Futuristic font class */
+.font-futuristic {
+  font-family: 'Orbitron', 'Rajdhani', system-ui, sans-serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--ink);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--electric-cyan);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--purple-accent);
+}
+
+/* Glassmorphism effect */
+.bg-glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Selection styling */
+::selection {
+  background: var(--electric-cyan);
+  color: var(--charcoal);
+}
+
+/* Disable text selection for game elements */
+.select-none {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Smooth transitions */
+* {
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}

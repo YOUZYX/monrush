@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MonadRush Audio Button Test</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1a1a1a;
+            color: #00ff88;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background: #222;
+        }
+        
+        .success {
+            color: #00ff88;
+        }
+        
+        .warning {
+            color: #ffaa00;
+        }
+        
+        .error {
+            color: #ff4444;
+        }
+        
+        .test-link {
+            color: #00aaff;
+            text-decoration: none;
+            margin-right: 15px;
+            padding: 5px 10px;
+            border: 1px solid #00aaff;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        
+        .test-link:hover {
+            background: #00aaff;
+            color: #1a1a1a;
+        }
+        
+        pre {
+            background: #111;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎵 MonadRush Audio Button Test Suite</h1>
+    
+    <div class="test-section">
+        <h2>🧪 Manual Testing Pages</h2>
+        <p>Click each link to test the audio button on different pages:</p>
+        
+        <a href="/" class="test-link">Homepage (Main)</a>
+        <a href="/play" class="test-link">Play Page</a>
+        <a href="/how-to-play" class="test-link">How To Play</a>
+        <a href="/leaderboard" class="test-link">Leaderboard</a>
+        <a href="/test-game" class="test-link">Test Game</a>
+        
+        <h3>What to Test:</h3>
+        <ul>
+            <li>✅ Audio button appears in header (top-right area)</li>
+            <li>✅ Button shows sound waves when audio is ON</li>
+            <li>✅ Button shows mute icon when audio is OFF</li>
+            <li>✅ Clicking toggles between mute/unmute</li>
+            <li>✅ Toast notification appears on toggle</li>
+            <li>✅ Background music starts (if audio files are present)</li>
+            <li>✅ Music stops when navigating away</li>
+        </ul>
+    </div>
+    
+    <div class="test-section">
+        <h2>🔊 Audio System Status Check</h2>
+        <div id="audio-status">Loading audio system...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🎮 Game Audio Testing</h2>
+        <p>For gameplay audio, go to <a href="/play" class="test-link">Play Page</a> and test:</p>
+        <ul>
+            <li>🎵 Menu music plays on load</li>
+            <li>🎮 Game music starts when game begins</li>
+            <li>🔊 Logo tap sounds (click.mp3)</li>
+            <li>🎁 Gift box sounds (bonus.mp3)</li>
+            <li>⚠️ Glitch hit sounds (danger.mp3)</li>
+            <li>💥 Bomb explosion sounds (bomb_explode.mp3)</li>
+            <li>🏆 Combo milestone sounds (combo.mp3)</li>
+            <li>⏰ Time warning at 10 seconds (time_warning.mp3)</li>
+            <li>🎵 Intense music in final countdown</li>
+            <li>🏁 Game over sound (game_over.mp3)</li>
+        </ul>
+    </div>
+    
+    <div class="test-section">
+        <h2>📱 Mobile Testing</h2>
+        <p>Test on mobile devices (or browser dev tools mobile view):</p>
+        <ul>
+            <li>Audio button visible in mobile header</li>
+            <li>Touch interactions work correctly</li>
+            <li>Audio starts after user interaction (mobile requirement)</li>
+            <li>Background music doesn't interfere with game sounds</li>
+        </ul>
+    </div>
+    
+    <div class="test-section">
+        <h2>🔧 Troubleshooting</h2>
+        <pre id="debug-info">Open browser console to see detailed audio system logs...</pre>
+        
+        <h3>Common Issues:</h3>
+        <ul>
+            <li><strong class="error">No audio button:</strong> Check if Header component is imported and used</li>
+            <li><strong class="error">Button not working:</strong> Check browser console for errors</li>
+            <li><strong class="warning">No sound:</strong> Verify audio files are in /public/audio/</li>
+            <li><strong class="warning">Music not stopping:</strong> Check cleanup in useEffect</li>
+        </ul>
+    </div>
+    
+    <script>
+        // Test the audio system
+        function testAudioSystem() {
+            const statusDiv = document.getElementById('audio-status');
+            const debugDiv = document.getElementById('debug-info');
+            
+            try {
+                // Try to access the audio system from the parent window
+                if (window.parent !== window) {
+                    statusDiv.innerHTML = '<span class="warning">⚠️ Running in iframe - limited audio access</span>';
+                    return;
+                }
+                
+                // Check if audio files exist by trying to load them
+                const audioFiles = [
+                    '/audio/click.mp3',
+                    '/audio/bonus.mp3', 
+                    '/audio/danger.mp3',
+                    '/audio/bomb_explode.mp3',
+                    '/audio/combo.mp3',
+                    '/audio/time_warning.mp3',
+                    '/audio/power_up.mp3',
+                    '/audio/game_start.mp3',
+                    '/audio/game_over.mp3',
+                    '/audio/menu_music.mp3',
+                    '/audio/game_music.mp3',
+                    '/audio/intense_music.mp3'
+                ];
+                
+                let foundFiles = 0;
+                let checkedFiles = 0;
+                
+                audioFiles.forEach(file => {
+                    const audio = new Audio(file);
+                    audio.addEventListener('canplay', () => {
+                        foundFiles++;
+                        updateStatus();
+                    });
+                    audio.addEventListener('error', () => {
+                        updateStatus();
+                    });
+                    audio.load();
+                    checkedFiles++;
+                });
+                
+                function updateStatus() {
+                    if (checkedFiles === audioFiles.length || foundFiles > 0) {
+                        const percentage = Math.round((foundFiles / audioFiles.length) * 100);
+                        let statusHtml = '';
+                        
+                        if (foundFiles === audioFiles.length) {
+                            statusHtml = `<span class="success">✅ All ${foundFiles} audio files loaded successfully!</span>`;
+                        } else if (foundFiles > 0) {
+                            statusHtml = `<span class="warning">⚠️ ${foundFiles}/${audioFiles.length} audio files found (${percentage}%)</span>`;
+                        } else {
+                            statusHtml = '<span class="error">❌ No audio files found</span>';
+                        }
+                        
+                        statusDiv.innerHTML = statusHtml;
+                        
+                        // Update debug info
+                        debugDiv.innerHTML = `Audio Files Status:
+Found: ${foundFiles}/${audioFiles.length}
+Missing files will be logged in browser console as "Failed to load sound/music: [filename]"
+
+To see real-time audio system logs:
+1. Open browser Developer Tools (F12)
+2. Go to Console tab  
+3. Navigate between pages and interact with audio button
+4. Look for messages starting with "🎵" or "🔊"`;
+                    }
+                }
+                
+                // Set a timeout in case some files don't respond
+                setTimeout(() => {
+                    if (foundFiles === 0) {
+                        statusDiv.innerHTML = '<span class="error">❌ No audio files detected - system will run silently</span>';
+                    }
+                }, 3000);
+                
+            } catch (error) {
+                statusDiv.innerHTML = `<span class="error">❌ Error testing audio system: ${error.message}</span>`;
+                debugDiv.innerHTML = `Error: ${error.stack}`;
+            }
+        }
+        
+        // Run the test when page loads
+        document.addEventListener('DOMContentLoaded', testAudioSystem);
+        
+        // Log navigation instructions
+        console.log('🎵 MonadRush Audio Test Suite Loaded');
+        console.log('📋 To test audio button:');
+        console.log('   1. Navigate to different pages using the links above');
+        console.log('   2. Look for audio button in top-right header');
+        console.log('   3. Click button to toggle mute/unmute');
+        console.log('   4. Verify toast notifications appear');
+        console.log('   5. Check browser console for audio system logs');
+    </script>
+</body>
+</html>
