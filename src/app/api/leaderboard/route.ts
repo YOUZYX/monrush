@@ -21,8 +21,8 @@ interface CombinedLeaderboardEntry {
 
 // Constants from your script
 const LEADERBOARD_URL = 'https://monad-games-id-site.vercel.app/leaderboard?page=1&gameId=65';
-const SCORE_URL = 'https://monad-games-id-site.vercel.app/leaderboard?page=1&gameId=65&sortBy=scores';
-const TX_URL = 'https://monad-games-id-site.vercel.app/leaderboard?page=1&gameId=65';
+const SCORE_URL = 'https://monad-games-id-site.vercel.app/leaderboard?page=1&gameId=178&sortBy=scores';
+const TX_URL = 'https://monad-games-id-site.vercel.app/leaderboard?page=1&gameId=178';
 
 // Your exact fetchEndpointData function
 async function fetchEndpointData(url: string) {
